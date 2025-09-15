@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>General Knowledge Quiz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 600px;
+        }
+        h1 {
+            text-align: center;
+            color: #007BFF;
+        }
+        .question-box {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .question-text {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .option-btn {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin-top: 8px;
+            text-align: left;
+            background-color: #f9f9f9;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .option-btn:hover {
+            background-color: #e9e9e9;
+        }
+        .option-btn.selected {
+            background-color: #d1e7ff;
+            border-color: #007BFF;
+        }
+        .option-btn.correct {
+            background-color: #d4edda;
+            border-color: #28a745;
+        }
+        .option-btn.incorrect {
+            background-color: #f8d7da;
+            border-color: #dc3545;
+        }
+        #submit-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            margin-top: 20px;
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        #submit-btn:hover {
+            background-color: #0056b3;
+        }
+        #result {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>General Knowledge Quiz</h1>
+        <form id="quiz-form">
+            {% for question in questions %}
+            <div class="question-box" data-id="{{ question.id }}">
+                <div class="question-text">{{ question.id }}. {{ question.question }}</div>
+                {% for option in question.options %}
+                <button type="button" class="option-btn" data-value="{{ option }}">{{ option }}</button>
+                {% endfor %}
+            </div>
+            {% endfor %}
+            <button type="submit" id="submit-btn">Submit Answers</button>
+        </form>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const quizForm = document.getElementById('quiz-form');
+            const resultDiv = document.getElementById('result');
+            const questionBoxes = document.querySelectorAll('.question-box');
+
+            questionBoxes.forEach(box => {
+                box.addEventListener('click', (event) => {
+                    const target = event.target;
+                    if (target.classList.contains('option-btn')) {
+                        // Deselect any previously selected option in the same question box
+                        const previouslySelected = box.querySelector('.option-btn.selected');
+                        if (previouslySelected) {
+                            previouslySelected.classList.remove('selected');
+                        }
+                        // Select the clicked option
+                        target.classList.add('selected');
+                    }
+                });
+            });
+
+            quizForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                const answers = {};
+                questionBoxes.forEach(box => {
+                    const questionId = box.dataset.id;
+                    const selectedOption = box.querySelector('.option-btn.selected');
+                    if (selectedOption) {
+                        answers[questionId] = selectedOption.dataset.value;
+                    }
+                });
+
+                const response = await fetch('/submit', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(answers)
+                });
+
+                const data = await response.json();
+                resultDiv.textContent = `You scored ${data.score} out of ${data.total}!`;
+
+                // Highlight correct and incorrect answers
+                questionBoxes.forEach(box => {
+                    const questionId = box.dataset.id;
+                    const correct_answer = data.correct_answers[questionId];
+                    const user_answer = answers[questionId];
+
+                    box.querySelectorAll('.option-btn').forEach(btn => {
+                        btn.disabled = true; // Disable buttons after submission
+                        btn.classList.remove('selected'); // Remove selected class
+                        if (btn.dataset.value === correct_answer) {
+                            btn.classList.add('correct');
+                        }
+                        if (user_answer && user_answer !== correct_answer && btn.dataset.value === user_answer) {
+                            btn.classList.add('incorrect');
+                        }
+                    });
+                });
+
+                document.getElementById('submit-btn').disabled = true; // Disable submit button
+            });
+        });
+    </script>
+</body>
+</html>
