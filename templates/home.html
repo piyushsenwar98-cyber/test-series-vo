@@ -23,7 +23,7 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             width: 90%;
             max-width: 500px;
-            position: relative; /* For admin button positioning */
+            position: relative;
         }
         h1 {
             color: #007BFF;
@@ -33,10 +33,9 @@
             font-size: 1.2em;
             line-height: 1.6;
         }
-        .start-btn {
+        .btn {
             padding: 15px 30px;
             font-size: 1.2em;
-            background-color: #28a745;
             color: #fff;
             text-decoration: none;
             border-radius: 5px;
@@ -44,8 +43,16 @@
             display: inline-block;
             margin-top: 20px;
         }
-        .start-btn:hover {
-            background-color: #218838;
+        .btn:hover {
+            opacity: 0.9;
+        }
+        .btn-primary {
+            background-color: #28a745;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+            font-size: 1em;
+            padding: 10px 20px;
         }
         .admin-link {
             position: absolute;
@@ -64,8 +71,7 @@
     <div class="container">
         <h1>Welcome to the Quiz App</h1>
         <p>Click the button below to start a test series and challenge your knowledge!</p>
-        <a href="/series" class="start-btn">Start Quizzes</a>
-        
+        <a href="/series" class="btn btn-primary">Start Quizzes</a>
         <a href="/admin/results" class="admin-link">Admin Dashboard</a>
     </div>
 </body>

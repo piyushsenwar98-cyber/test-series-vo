@@ -120,65 +120,92 @@ def submit(series_id, quiz_id):
     correct_answers = {str(q['id']): q['answer'] for q in quiz_info['questions']}
     
     score = 0
+    correct_count = 0
+    wrong_count = 0
+    unanswered_count = 0
     
     for q_id, correct_ans in correct_answers.items():
         user_ans = user_answers.get(q_id)
         if user_ans and user_ans == correct_ans:
             score += 4
+            correct_count += 1
         elif user_ans:
             score -= 1
-        
+            wrong_count += 1
+        else:
+            unanswered_count += 1
+            
     result_data = {
+        'total_score': score,
+        'correct_count': correct_count,
+        'wrong_count': wrong_count,
+        'unanswered_count': unanswered_count,
+        'total_questions': len(quiz_info['questions']),
+        'user_answers': user_answers,
+        'correct_answers': correct_answers,
+        'time_taken_seconds': user_answers.get('time_taken_seconds')
+    }
+
+    # Save results to file for admin view
+    if os.path.exists(RESULTS_FILE):
+        with open(RESULTS_FILE, 'r') as f:
+            all_results = json.load(f)
+    else:
+        all_results = []
+    all_results.append({
         'quiz_id': quiz_id,
         'series_id': series_id,
         'total_score': score,
         'time_taken_seconds': user_answers.get('time_taken_seconds'),
         'user_answers': user_answers,
         'correct_answers': correct_answers
-    }
-
-    if os.path.exists(RESULTS_FILE):
-        with open(RESULTS_FILE, 'r') as f:
-            all_results = json.load(f)
-    else:
-        all_results = []
-    
-    all_results.append(result_data)
+    })
     with open(RESULTS_FILE, 'w') as f:
         json.dump(all_results, f, indent=4)
+        
+    # Store the result and original questions in the user's session
+    session['results'] = result_data
+    session['quiz_questions'] = quiz_info['questions']
     
-    return jsonify({'success': True})
+    # Redirect to the confirmation page
+    return jsonify({'success': True, 'redirect_url': url_for('submission_received')})
 
+# This route now renders the confirmation page
 @app.route('/submission_received')
 def submission_received():
     return render_template('submission_received.html')
 
-# This is the new route for the list of results
+# This is the new route for the user's results page
+@app.route('/user_results')
+def show_user_results():
+    if 'results' not in session or 'quiz_questions' not in session:
+        return redirect(url_for('home'))
+    
+    results = session.pop('results')
+    questions = session.pop('quiz_questions')
+    
+    return render_template('results.html', results=results, questions=questions)
+
+# All admin routes remain unchanged
 @app.route('/admin/results')
 def admin_results_list():
     if not os.path.exists(RESULTS_FILE):
         return render_template('admin_results_list.html', all_results=[])
-
     with open(RESULTS_FILE, 'r') as f:
         all_results = json.load(f)
-        
     return render_template('admin_results_list.html', all_results=all_results)
 
-# This is the new route for a specific result
 @app.route('/admin/results/<int:result_id>')
 def admin_results_detail(result_id):
     if not os.path.exists(RESULTS_FILE):
         return "No results found.", 404
-    
     with open(RESULTS_FILE, 'r') as f:
         all_results = json.load(f)
-    
-    # Use result_id (which is 1-based from the URL) to get the correct 0-based index
     if 0 <= result_id - 1 < len(all_results):
         result = all_results[result_id - 1]
         series, quiz_data = get_quiz_by_id(result['series_id'], result['quiz_id'])
-        
-        # Prepare data to be sent to the results.html template
+        if not quiz_data:
+            return "Quiz data for this result not found.", 404
         results_data = {
             'total_score': result['total_score'],
             'correct_count': sum(1 for q_id, ans in result['correct_answers'].items() if result['user_answers'].get(q_id) == ans),
@@ -189,7 +216,6 @@ def admin_results_detail(result_id):
             'correct_answers': result['correct_answers'],
             'time_taken_seconds': result['time_taken_seconds']
         }
-        
         return render_template('results.html', results=results_data, questions=quiz_data['questions'])
     else:
         return "Result not found.", 404

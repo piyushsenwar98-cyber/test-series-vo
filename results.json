@@ -136,5 +136,202 @@
             "19": "Cheetah",
             "20": "8"
         }
+    },
+    {
+        "quiz_id": "gk-test-1",
+        "series_id": "gk",
+        "total_score": 2,
+        "time_taken_seconds": 4,
+        "user_answers": {
+            "1": "Paris",
+            "3": "Indian Ocean",
+            "17": "198",
+            "time_taken_seconds": 4
+        },
+        "correct_answers": {
+            "1": "Paris",
+            "2": "Mars",
+            "3": "Pacific Ocean",
+            "4": "William Shakespeare",
+            "5": "Yen",
+            "6": "Oxygen",
+            "7": "Vatican City",
+            "8": "7",
+            "9": "100\u00b0C",
+            "10": "Blue Whale",
+            "11": "Mitochondria",
+            "12": "Leonardo da Vinci",
+            "13": "China",
+            "14": "Diamond",
+            "15": "1912",
+            "16": "Sahara Desert",
+            "17": "206",
+            "18": "Nitrogen",
+            "19": "Cheetah",
+            "20": "8"
+        }
+    },
+    {
+        "quiz_id": "gk-test-1",
+        "series_id": "gk",
+        "total_score": 12,
+        "time_taken_seconds": 5,
+        "user_answers": {
+            "1": "Paris",
+            "2": "Mars",
+            "20": "8",
+            "time_taken_seconds": 5
+        },
+        "correct_answers": {
+            "1": "Paris",
+            "2": "Mars",
+            "3": "Pacific Ocean",
+            "4": "William Shakespeare",
+            "5": "Yen",
+            "6": "Oxygen",
+            "7": "Vatican City",
+            "8": "7",
+            "9": "100\u00b0C",
+            "10": "Blue Whale",
+            "11": "Mitochondria",
+            "12": "Leonardo da Vinci",
+            "13": "China",
+            "14": "Diamond",
+            "15": "1912",
+            "16": "Sahara Desert",
+            "17": "206",
+            "18": "Nitrogen",
+            "19": "Cheetah",
+            "20": "8"
+        }
+    },
+    {
+        "quiz_id": "gk-test-1",
+        "series_id": "gk",
+        "total_score": 4,
+        "time_taken_seconds": 6,
+        "user_answers": {
+            "20": "8",
+            "time_taken_seconds": 6
+        },
+        "correct_answers": {
+            "1": "Paris",
+            "2": "Mars",
+            "3": "Pacific Ocean",
+            "4": "William Shakespeare",
+            "5": "Yen",
+            "6": "Oxygen",
+            "7": "Vatican City",
+            "8": "7",
+            "9": "100\u00b0C",
+            "10": "Blue Whale",
+            "11": "Mitochondria",
+            "12": "Leonardo da Vinci",
+            "13": "China",
+            "14": "Diamond",
+            "15": "1912",
+            "16": "Sahara Desert",
+            "17": "206",
+            "18": "Nitrogen",
+            "19": "Cheetah",
+            "20": "8"
+        }
+    },
+    {
+        "quiz_id": "gk-test-1",
+        "series_id": "gk",
+        "total_score": -1,
+        "time_taken_seconds": 2,
+        "user_answers": {
+            "1": "Rome",
+            "time_taken_seconds": 2
+        },
+        "correct_answers": {
+            "1": "Paris",
+            "2": "Mars",
+            "3": "Pacific Ocean",
+            "4": "William Shakespeare",
+            "5": "Yen",
+            "6": "Oxygen",
+            "7": "Vatican City",
+            "8": "7",
+            "9": "100\u00b0C",
+            "10": "Blue Whale",
+            "11": "Mitochondria",
+            "12": "Leonardo da Vinci",
+            "13": "China",
+            "14": "Diamond",
+            "15": "1912",
+            "16": "Sahara Desert",
+            "17": "206",
+            "18": "Nitrogen",
+            "19": "Cheetah",
+            "20": "8"
+        }
+    },
+    {
+        "quiz_id": "gk-test-1",
+        "series_id": "gk",
+        "total_score": 4,
+        "time_taken_seconds": 3,
+        "user_answers": {
+            "2": "Mars",
+            "time_taken_seconds": 3
+        },
+        "correct_answers": {
+            "1": "Paris",
+            "2": "Mars",
+            "3": "Pacific Ocean",
+            "4": "William Shakespeare",
+            "5": "Yen",
+            "6": "Oxygen",
+            "7": "Vatican City",
+            "8": "7",
+            "9": "100\u00b0C",
+            "10": "Blue Whale",
+            "11": "Mitochondria",
+            "12": "Leonardo da Vinci",
+            "13": "China",
+            "14": "Diamond",
+            "15": "1912",
+            "16": "Sahara Desert",
+            "17": "206",
+            "18": "Nitrogen",
+            "19": "Cheetah",
+            "20": "8"
+        }
+    },
+    {
+        "quiz_id": "gk-test-1",
+        "series_id": "gk",
+        "total_score": 3,
+        "time_taken_seconds": 4,
+        "user_answers": {
+            "1": "Paris",
+            "3": "Atlantic Ocean",
+            "time_taken_seconds": 4
+        },
+        "correct_answers": {
+            "1": "Paris",
+            "2": "Mars",
+            "3": "Pacific Ocean",
+            "4": "William Shakespeare",
+            "5": "Yen",
+            "6": "Oxygen",
+            "7": "Vatican City",
+            "8": "7",
+            "9": "100\u00b0C",
+            "10": "Blue Whale",
+            "11": "Mitochondria",
+            "12": "Leonardo da Vinci",
+            "13": "China",
+            "14": "Diamond",
+            "15": "1912",
+            "16": "Sahara Desert",
+            "17": "206",
+            "18": "Nitrogen",
+            "19": "Cheetah",
+            "20": "8"
+        }
     }
 ]

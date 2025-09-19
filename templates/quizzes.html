@@ -14,15 +14,15 @@
             align-items: center;
             min-height: 100vh;
             margin: 0;
-            text-align: center;
         }
         .container {
             background-color: #fff;
-            padding: 50px;
+            padding: 30px;
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             width: 90%;
             max-width: 600px;
+            text-align: center;
         }
         h1 {
             color: #007BFF;
@@ -31,35 +31,48 @@
         .quiz-list {
             list-style: none;
             padding: 0;
+            margin: 0;
         }
         .quiz-item {
             margin-bottom: 15px;
-            padding: 20px;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        }
+        .quiz-link, .coming-soon {
+            display: block;
+            padding: 15px;
             background-color: #f9f9f9;
-        }
-        .quiz-item h2 {
-            margin: 0;
-            font-size: 1.2em;
-        }
-        .quiz-item a {
+            border: 1px solid #ddd;
+            border-radius: 8px;
             text-decoration: none;
-            padding: 10px 20px;
-            border-radius: 5px;
+            color: #333;
             font-weight: bold;
+            font-size: 1.1em;
         }
-        .quiz-item .available {
-            background-color: #28a745;
-            color: #fff;
+        .quiz-link:hover {
+            background-color: #e9e9e9;
         }
-        .quiz-item .coming-soon {
+        .coming-soon {
+            background-color: #f2f2f2;
+            color: #999;
+            cursor: not-allowed;
+        }
+        .coming-soon span {
+            display: block;
+            font-size: 0.8em;
+            font-weight: normal;
+            margin-top: 5px;
+        }
+        .btn {
+            padding: 10px 20px;
             background-color: #6c757d;
             color: #fff;
-            cursor: default;
+            text-decoration: none;
+            border-radius: 5px;
+            display: inline-block;
+            margin-top: 20px;
+            transition: opacity 0.3s;
+        }
+        .btn:hover {
+            opacity: 0.9;
         }
     </style>
 </head>
@@ -69,19 +82,18 @@
         <ul class="quiz-list">
             {% for quiz in series.quizzes %}
             <li class="quiz-item">
-                <h2>{{ quiz.title }}</h2>
                 {% if quiz.status == 'available' %}
-                <div style="font-size: 0.9em; color: #666; margin-top: 5px;">
-                    Total Questions: **{{ quiz.questions | length }}**<br>
-                    Time: **{{ quiz.duration }}** minutes
-                </div>
-                <a href="/quiz/{{ series_id }}/{{ quiz.id }}" class="available">Start Quiz</a>
+                    <a href="/quiz/{{ series_id }}/{{ quiz.id }}" class="quiz-link">{{ quiz.title }}</a>
                 {% else %}
-                <span class="coming-soon">Coming Soon</span>
+                    <div class="coming-soon">
+                        {{ quiz.title }}
+                        <span>Coming Soon: {{ quiz.available_date }}</span>
+                    </div>
                 {% endif %}
             </li>
             {% endfor %}
         </ul>
+        <a href="/series" class="btn">Back to Test Series</a>
     </div>
 </body>
 </html>
