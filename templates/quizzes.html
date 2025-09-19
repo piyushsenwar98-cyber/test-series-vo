@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ series.title }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            text-align: center;
+        }
+        .container {
+            background-color: #fff;
+            padding: 50px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 600px;
+        }
+        h1 {
+            color: #007BFF;
+            margin-bottom: 20px;
+        }
+        .quiz-list {
+            list-style: none;
+            padding: 0;
+        }
+        .quiz-item {
+            margin-bottom: 15px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #f9f9f9;
+        }
+        .quiz-item h2 {
+            margin: 0;
+            font-size: 1.2em;
+        }
+        .quiz-item a {
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .quiz-item .available {
+            background-color: #28a745;
+            color: #fff;
+        }
+        .quiz-item .coming-soon {
+            background-color: #6c757d;
+            color: #fff;
+            cursor: default;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>{{ series.title }}</h1>
+        <ul class="quiz-list">
+            {% for quiz in series.quizzes %}
+            <li class="quiz-item">
+                <h2>{{ quiz.title }}</h2>
+                {% if quiz.status == 'available' %}
+                <div style="font-size: 0.9em; color: #666; margin-top: 5px;">
+                    Total Questions: **{{ quiz.questions | length }}**<br>
+                    Time: **{{ quiz.duration }}** minutes
+                </div>
+                <a href="/quiz/{{ series_id }}/{{ quiz.id }}" class="available">Start Quiz</a>
+                {% else %}
+                <span class="coming-soon">Coming Soon</span>
+                {% endif %}
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+</body>
+</html>

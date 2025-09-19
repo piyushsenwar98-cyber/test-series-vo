@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>General Knowledge Quiz</title>
+    <title>{{ quiz.title }}</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -16,6 +16,7 @@
             margin: 0;
         }
         .container {
+            position: relative;
             background-color: #fff;
             padding: 30px;
             border-radius: 10px;
@@ -27,7 +28,20 @@
             text-align: center;
             color: #007BFF;
         }
+        .timer {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #dc3545;
+            padding: 10px 15px;
+            background-color: #fff;
+            border: 2px solid #dc3545;
+            border-radius: 5px;
+        }
         .question-box {
+            position: relative;
             margin-bottom: 20px;
             padding: 15px;
             border: 1px solid #ddd;
@@ -36,6 +50,12 @@
         .question-text {
             font-weight: bold;
             margin-bottom: 10px;
+        }
+        .question-scoring {
+            font-weight: bold;
+            color: #6c757d;
+            font-size: 0.9em;
+            text-align: right;
         }
         .option-btn {
             display: block;
@@ -55,14 +75,6 @@
             background-color: #d1e7ff;
             border-color: #007BFF;
         }
-        .option-btn.correct {
-            background-color: #d4edda;
-            border-color: #28a745;
-        }
-        .option-btn.incorrect {
-            background-color: #f8d7da;
-            border-color: #dc3545;
-        }
         #submit-btn {
             display: block;
             width: 100%;
@@ -78,20 +90,27 @@
         #submit-btn:hover {
             background-color: #0056b3;
         }
-        #result {
-            text-align: center;
+        .back-btn {
+            padding: 10px 20px;
+            background-color: #6c757d;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            display: inline-block;
             margin-top: 20px;
-            font-size: 20px;
-            font-weight: bold;
+            margin-bottom: 20px;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>General Knowledge Quiz</h1>
+        <div class="timer" id="quiz-timer">15:00</div>
+        <a href="/series/{{ series_id }}" class="back-btn">Back to Quizzes</a>
+        <h1>{{ quiz.title }}</h1>
         <form id="quiz-form">
-            {% for question in questions %}
+            {% for question in quiz.questions %}
             <div class="question-box" data-id="{{ question.id }}">
+                <div class="question-scoring">(+4 for correct, -1 for wrong)</div>
                 <div class="question-text">{{ question.id }}. {{ question.question }}</div>
                 {% for option in question.options %}
                 <button type="button" class="option-btn" data-value="{{ option }}">{{ option }}</button>
@@ -100,25 +119,45 @@
             {% endfor %}
             <button type="submit" id="submit-btn">Submit Answers</button>
         </form>
-        <div id="result"></div>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const quizForm = document.getElementById('quiz-form');
-            const resultDiv = document.getElementById('result');
             const questionBoxes = document.querySelectorAll('.question-box');
+            const timerDisplay = document.getElementById('quiz-timer');
+            const duration = {{ quiz.duration | default(15) }};
+            let timeInSeconds = duration * 60;
+            let timerInterval;
+            
+            function formatTime(seconds) {
+                const minutes = Math.floor(seconds / 60);
+                const remainingSeconds = seconds % 60;
+                return `${String(minutes).padStart(2, '0')}:${String(remainingSeconds).padStart(2, '0')}`;
+            }
+
+            function startTimer() {
+                timerInterval = setInterval(() => {
+                    timeInSeconds--;
+                    timerDisplay.textContent = formatTime(timeInSeconds);
+                    if (timeInSeconds <= 0) {
+                        clearInterval(timerInterval);
+                        quizForm.dispatchEvent(new Event('submit'));
+                        timerDisplay.textContent = "Time's up!";
+                    }
+                }, 1000);
+            }
+
+            startTimer();
 
             questionBoxes.forEach(box => {
                 box.addEventListener('click', (event) => {
                     const target = event.target;
                     if (target.classList.contains('option-btn')) {
-                        // Deselect any previously selected option in the same question box
                         const previouslySelected = box.querySelector('.option-btn.selected');
                         if (previouslySelected) {
                             previouslySelected.classList.remove('selected');
                         }
-                        // Select the clicked option
                         target.classList.add('selected');
                     }
                 });
@@ -126,6 +165,8 @@
 
             quizForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
+                clearInterval(timerInterval);
+                document.getElementById('submit-btn').disabled = true;
 
                 const answers = {};
                 questionBoxes.forEach(box => {
@@ -136,36 +177,24 @@
                     }
                 });
 
-                const response = await fetch('/submit', {
+                const quizId = '{{ quiz.id }}';
+                const seriesId = '{{ series_id }}';
+                
+                const timeTakenSeconds = (duration * 60) - timeInSeconds;
+                answers.time_taken_seconds = timeTakenSeconds;
+
+                const response = await fetch(`/submit/${seriesId}/${quizId}`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify(answers)
                 });
-
+                
                 const data = await response.json();
-                resultDiv.textContent = `You scored ${data.score} out of ${data.total}!`;
-
-                // Highlight correct and incorrect answers
-                questionBoxes.forEach(box => {
-                    const questionId = box.dataset.id;
-                    const correct_answer = data.correct_answers[questionId];
-                    const user_answer = answers[questionId];
-
-                    box.querySelectorAll('.option-btn').forEach(btn => {
-                        btn.disabled = true; // Disable buttons after submission
-                        btn.classList.remove('selected'); // Remove selected class
-                        if (btn.dataset.value === correct_answer) {
-                            btn.classList.add('correct');
-                        }
-                        if (user_answer && user_answer !== correct_answer && btn.dataset.value === user_answer) {
-                            btn.classList.add('incorrect');
-                        }
-                    });
-                });
-
-                document.getElementById('submit-btn').disabled = true; // Disable submit button
+                if (data.success) {
+                    window.location.href = "/submission_received";
+                }
             });
         });
     </script>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Results List</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            text-align: center;
+        }
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 600px;
+        }
+        h1 {
+            color: #007BFF;
+            margin-bottom: 20px;
+        }
+        .result-item {
+            display: block;
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #333;
+            text-align: left;
+            transition: background-color 0.3s;
+        }
+        .result-item:hover {
+            background-color: #f9f9f9;
+        }
+        .result-item strong {
+            display: block;
+            font-size: 1.2em;
+        }
+        .result-item span {
+            font-size: 0.9em;
+            color: #6c757d;
+        }
+        .back-btn {
+            padding: 10px 20px;
+            background-color: #6c757d;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            display: inline-block;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Admin Results Dashboard</h1>
+        {% if all_results %}
+            {% for result in all_results %}
+            <a href="/admin/results/{{ loop.index }}" class="result-item">
+                <strong>Submission #{{ loop.index }}</strong>
+                <span>Score: {{ result.total_score }} | Time Taken: {{ result.time_taken_seconds }}s</span>
+            </a>
+            {% endfor %}
+        {% else %}
+            <p>No results have been submitted yet.</p>
+        {% endif %}
+        <a href="/" class="back-btn">Back to Home</a>
+    </div>
+</body>
+</html>

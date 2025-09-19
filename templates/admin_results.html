@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Results Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            color: #333;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #007BFF;
+        }
+        .result-box {
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        .result-header {
+            font-weight: bold;
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+        .result-header span {
+            color: #6c757d;
+            font-weight: normal;
+        }
+        .result-details p {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Admin Results Dashboard</h1>
+        {% if all_results %}
+        {% for result in all_results %}
+        <div class="result-box">
+            <div class="result-header">
+                Submission #{{ loop.index }}
+                <span>(Quiz: {{ result.series_id | upper }} - {{ result.quiz_id }})</span>
+            </div>
+            <div class="result-details">
+                <p><strong>Total Score:</strong> {{ result.total_score }}</p>
+                <p><strong>Time Taken:</strong> {{ result.time_taken_seconds }} seconds</p>
+                <p><strong>User Answers:</strong> {{ result.user_answers }}</p>
+                <p><strong>Correct Answers:</strong> {{ result.correct_answers }}</p>
+            </div>
+        </div>
+        {% endfor %}
+        {% else %}
+        <p>No results submitted yet.</p>
+        {% endif %}
+    </div>
+</body>
+</html>

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Results</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            text-align: center;
+        }
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 600px;
+        }
+        h1 {
+            color: #007BFF;
+            margin-bottom: 20px;
+        }
+        .result-info {
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+        .result-summary {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #28a745;
+            margin-bottom: 30px;
+        }
+        .question-review-box {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            text-align: left;
+            position: relative; /* For positioning the icon */
+        }
+        .question-review-text {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .correct-answer {
+            color: #28a745;
+            font-weight: bold;
+        }
+        .your-answer {
+            color: #dc3545;
+        }
+        .back-btn {
+            padding: 10px 20px;
+            background-color: #6c757d;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            display: inline-block;
+            margin-top: 20px;
+        }
+        /* Styles for icons */
+        .status-icon {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 2em;
+        }
+        .status-icon.correct::before {
+            content: "✓";
+            color: #28a745;
+        }
+        .status-icon.wrong::before {
+            content: "✕";
+            color: #dc3545;
+        }
+        .status-icon.unanswered::before {
+            content: "—";
+            color: #6c757d;
+            font-size: 2.5em; /* Make the dash a bit larger */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Quiz Results</h1>
+        <div class="result-summary">
+            Final Score: {{ results.total_score }}
+        </div>
+        <div class="result-info">
+            Correct Answers: {{ results.correct_count }}
+        </div>
+        <div class="result-info">
+            Wrong Answers: {{ results.wrong_count }}
+        </div>
+        <div class="result-info">
+            Unanswered Questions: {{ results.unanswered_count }}
+        </div>
+        <div class="result-info">
+            Time Taken: {{ results.time_taken_seconds }} seconds
+        </div>
+        
+        <h2>Answer Key</h2>
+        {% for question in questions %}
+        <div class="question-review-box">
+            <span class="status-icon 
+                {% if results.user_answers[question.id | string] == results.correct_answers[question.id | string] %}
+                    correct
+                {% elif results.user_answers[question.id | string] %}
+                    wrong
+                {% else %}
+                    unanswered
+                {% endif %}
+            "></span>
+
+            <div class="question-review-text">{{ loop.index }}. {{ question.question }}</div>
+            <div class="correct-answer">Correct Answer: {{ results.correct_answers[question.id | string] }}</div>
+            <div>
+                Your Answer: 
+                {% if results.user_answers[question.id | string] %}
+                    {% if results.user_answers[question.id | string] == results.correct_answers[question.id | string] %}
+                    <span>{{ results.user_answers[question.id | string] }}</span>
+                    {% else %}
+                    <span class="your-answer">{{ results.user_answers[question.id | string] }}</span>
+                    {% endif %}
+                {% else %}
+                <span class="your-answer">Not Answered</span>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+
+        <a href="/series" class="back-btn">Return to Test Series</a>
+    </div>
+</body>
+</html>
