@@ -7,6 +7,8 @@ app.secret_key = 'your_secret_key_here'
 
 # Define the file path for saving results
 RESULTS_FILE = 'results.json'
+# Define a secret password for the admin dashboard
+ADMIN_PASSWORD = 'Piyush11@'  # <--- CHANGE THIS TO A SECURE PASSWORD
 
 # --- Existing quiz data structure ---
 test_series = {
@@ -167,15 +169,12 @@ def submit(series_id, quiz_id):
     session['results'] = result_data
     session['quiz_questions'] = quiz_info['questions']
     
-    # Redirect to the confirmation page
     return jsonify({'success': True, 'redirect_url': url_for('submission_received')})
 
-# This route now renders the confirmation page
 @app.route('/submission_received')
 def submission_received():
     return render_template('submission_received.html')
 
-# This is the new route for the user's results page
 @app.route('/user_results')
 def show_user_results():
     if 'results' not in session or 'quiz_questions' not in session:
@@ -186,17 +185,40 @@ def show_user_results():
     
     return render_template('results.html', results=results, questions=questions)
 
-# All admin routes remain unchanged
+# New route to handle password submission
+@app.route('/admin/login', methods=['GET', 'POST'])
+def admin_login():
+    if request.method == 'POST':
+        password = request.form.get('password')
+        if password == ADMIN_PASSWORD:
+            session['logged_in'] = True
+            return redirect(url_for('admin_results_list'))
+        return render_template('admin_login.html', error='Invalid Password')
+    return render_template('admin_login.html')
+
+@app.route('/admin/logout')
+def admin_logout():
+    session.pop('logged_in', None)
+    return redirect(url_for('admin_login'))
+    
+# This is the protected admin results list page
 @app.route('/admin/results')
 def admin_results_list():
+    if not session.get('logged_in'):
+        return redirect(url_for('admin_login'))
+    
     if not os.path.exists(RESULTS_FILE):
         return render_template('admin_results_list.html', all_results=[])
     with open(RESULTS_FILE, 'r') as f:
         all_results = json.load(f)
     return render_template('admin_results_list.html', all_results=all_results)
 
+# This is the protected individual result page
 @app.route('/admin/results/<int:result_id>')
 def admin_results_detail(result_id):
+    if not session.get('logged_in'):
+        return redirect(url_for('admin_login'))
+
     if not os.path.exists(RESULTS_FILE):
         return "No results found.", 404
     with open(RESULTS_FILE, 'r') as f:

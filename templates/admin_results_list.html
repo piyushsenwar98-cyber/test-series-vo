@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Results List</title>
+    <title>Admin Results</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -22,33 +22,55 @@
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             width: 90%;
-            max-width: 600px;
+            max-width: 800px;
+            position: relative; /* For positioning the logout button */
         }
         h1 {
             color: #007BFF;
             margin-bottom: 20px;
         }
+        .logout-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 8px 15px;
+            background-color: #dc3545;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 0.9em;
+        }
+        .logout-btn:hover {
+            opacity: 0.9;
+        }
+        .results-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
         .result-item {
-            display: block;
-            padding: 15px;
             margin-bottom: 15px;
             border: 1px solid #ddd;
             border-radius: 8px;
-            text-decoration: none;
-            color: #333;
-            text-align: left;
+            padding: 15px;
+            background-color: #f9f9f9;
             transition: background-color 0.3s;
         }
         .result-item:hover {
-            background-color: #f9f9f9;
+            background-color: #e9e9e9;
         }
-        .result-item strong {
+        .result-link {
             display: block;
-            font-size: 1.2em;
+            text-decoration: none;
+            color: #333;
+            font-weight: bold;
         }
-        .result-item span {
+        .result-link span {
+            display: block;
+            font-weight: normal;
             font-size: 0.9em;
-            color: #6c757d;
+            color: #666;
+            margin-top: 5px;
         }
         .back-btn {
             padding: 10px 20px;
@@ -64,16 +86,22 @@
 <body>
     <div class="container">
         <h1>Admin Results Dashboard</h1>
-        {% if all_results %}
+        
+        <a href="{{ url_for('admin_logout') }}" class="logout-btn">Logout</a>
+
+        <ul class="results-list">
             {% for result in all_results %}
-            <a href="/admin/results/{{ loop.index }}" class="result-item">
-                <strong>Submission #{{ loop.index }}</strong>
-                <span>Score: {{ result.total_score }} | Time Taken: {{ result.time_taken_seconds }}s</span>
-            </a>
+            <li class="result-item">
+                <a href="{{ url_for('admin_results_detail', result_id=loop.index) }}" class="result-link">
+                    Quiz ID: {{ result.quiz_id }} 
+                    <span>Score: {{ result.total_score }}</span>
+                    <span>Time Taken: {{ "%.2f"|format(result.time_taken_seconds | float / 60) }} minutes</span>
+                </a>
+            </li>
+            {% else %}
+            <li>No results found.</li>
             {% endfor %}
-        {% else %}
-            <p>No results have been submitted yet.</p>
-        {% endif %}
+        </ul>
         <a href="/" class="back-btn">Back to Home</a>
     </div>
 </body>
